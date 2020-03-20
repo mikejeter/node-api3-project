@@ -56,7 +56,7 @@ router.get('/:id', validateUserId, (req, res) => {
     });
 });
 
-router.get('/:id/posts', validateUserId, validatePost, (req, res) => {
+router.get('/:id/posts', validateUserId, (req, res) => {
   // do your magic!
   db.getUserPosts(req.params.id) 
     .then(posts => {
@@ -65,8 +65,11 @@ router.get('/:id/posts', validateUserId, validatePost, (req, res) => {
       } else {
         res.status(200).json(posts);
       }
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).json({ message: 'Error retrieving posts.' });
     });
-    
 });
 
 router.delete('/:id', validateUserId, (req, res) => {
@@ -108,11 +111,9 @@ function validateUserId(req, res, next) {
       } else {
         req.user = user;
       }
-    })
-    .catch(error => {
-      console.log(error);
-      res.status(500).json({ message: 'Error retrieving posts.' });
+      next();
     });
+    
 }
 
 function validateUser(req, res, next) {
